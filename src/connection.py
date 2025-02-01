@@ -9,7 +9,7 @@ class Connection:
     def get_connection(self):
         return self.conn
     
-    def close(self):
+    def close_connection(self):
         self.conn = None
         
 
