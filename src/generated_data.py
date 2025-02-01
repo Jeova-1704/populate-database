@@ -4,6 +4,7 @@ import random
 from connection import Connection
 from os import getenv
 from utils import CATEGORIAS_PRODUTOS, STATUS_PEDIDO, ERROS_NOMES, ERROS_EMAIL
+from dotenv import load_dotenv
 
 fake = Faker()
 num_registros = 10_000
@@ -77,10 +78,11 @@ def list_to_df():
 
 def insert_data():
     try:
+        load_dotenv()
         url = getenv("SUPABASE_URL")
         key = getenv("SUPABASE_KEY")
         connection = Connection(url, key)
-        client = connection.get_client()
+        client = connection.get_connection()
 
         df_clientes, df_produtos, df_pedidos = list_to_df()
 
@@ -95,9 +97,9 @@ def insert_data():
         client.table('pedidos').insert(df_pedidos.to_dict(orient='records')).execute()
 
         print("Data inserted successfully!")
-        connection.close()
     except Exception as e:
         print(f"Error inserting data: {e}")
-        connection.close()
         raise e
+    finally:
+        connection.close_connection()
     
